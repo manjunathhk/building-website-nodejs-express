@@ -5,14 +5,13 @@ const speakers = require('./speakers');
 const feedback = require('./feedback');
 
 module.exports = (params) => {
-  router.get('/', (request, response) => {
-    if (!request.session.visitCount) {
-      request.session.visitCount = 0;
-    }
-    request.session.visitCount += 1;
-    console.log(`Number of visits: ${request.session.visitCount}`);
-    
-    response.render('pages/index', { pageTitle: 'Welcome' });
+  const { speakerService } = params;
+
+  router.get('/', async (request, response) => {
+    const artwork = await speakerService.getAllArtwork();
+    const topSpeakers = await speakerService.getList();
+
+    response.render('layout', { pageTitle: 'Welcome', template: 'index', topSpeakers, artwork });
   });
 
   router.use('/speakers', speakers(params));
