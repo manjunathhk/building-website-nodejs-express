@@ -7,11 +7,20 @@ const feedback = require('./feedback');
 module.exports = (params) => {
   const { speakerService } = params;
 
-  router.get('/', async (request, response) => {
-    const artwork = await speakerService.getAllArtwork();
-    const topSpeakers = await speakerService.getList();
+  router.get('/', async (request, response, next) => {
+    try {
+      const artwork = await speakerService.getAllArtwork();
+      const topSpeakers = await speakerService.getList();
 
-    response.render('layout', { pageTitle: 'Welcome', template: 'index', topSpeakers, artwork });
+      return response.render('layout', {
+        pageTitle: 'Welcome',
+        template: 'index',
+        topSpeakers,
+        artwork,
+      });
+    } catch (error) {
+      return next(error);
+    }
   });
 
   router.use('/speakers', speakers(params));
